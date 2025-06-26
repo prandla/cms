@@ -41,7 +41,6 @@ import sys
 
 from cms import utf8_decoder
 from cms.db import version as model_version
-from cmscommon.archive import Archive
 
 
 logger = logging.getLogger(__name__)
@@ -68,19 +67,10 @@ def main():
         logger.critical("The given path doesn't exist")
         return 1
 
-    archive = None
-    if Archive.is_supported(path):
-        archive = Archive(path)
-        path = archive.unpack()
-
-        file_names = os.listdir(path)
-        if len(file_names) != 1:
-            logger.critical("Cannot find a root directory in the "
-                            "archive.")
-            archive.cleanup()
-            return 1
-
-        path = os.path.join(path, file_names[0])
+    if not os.path.isdir(path) and os.path.basename(path) != "contest.json":
+        logger.critical("DumpUpdater cannot update compressed dumps. "
+                        "Please extract the dump into a folder and try again.")
+        return 1
 
     if not path.endswith("contest.json"):
         path = os.path.join(path, "contest.json")
@@ -138,12 +128,6 @@ def main():
 
     with open(path, 'wt', encoding="utf-8") as fout:
         json.dump(data, fout, indent=4, sort_keys=True)
-
-    if archive is not None:
-        # Keep the old archive, just rename it
-        shutil.move(archive.path, archive.path + ".bak")
-        archive.repack(os.path.abspath(archive.path))
-        archive.cleanup()
 
     return 0
 

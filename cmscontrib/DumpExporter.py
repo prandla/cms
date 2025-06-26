@@ -345,8 +345,6 @@ class DumpExporter:
 
         """
 
-        # TODO - Probably this method could be merged in FileCacher
-
         # First get the file
         try:
             fobj = self.file_cacher.get_file(digest)

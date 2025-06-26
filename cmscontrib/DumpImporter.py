@@ -87,28 +87,6 @@ from cmscommon.digest import path_digest
 logger = logging.getLogger(__name__)
 
 
-def find_root_of_archive(file_names: list[str]) -> str | None:
-    """Given a list of file names (the content of an archive) find the
-    name of the root directory, i.e., the only file that would be
-    created in a directory if we extract there the archive.
-
-    file_names: the list of file names in the archive
-
-    return: the root directory, or None if unable to find
-        (for example if there is more than one).
-
-    """
-
-    current_root = None
-    for file_name in file_names:
-        if '/' not in file_name or '/' not in file_name[0:-1]:
-            if current_root is None:
-                current_root = file_name
-            else:
-                return None
-    return current_root
-
-
 def decode_value(type_: TypeEngine, value: object) -> object:
     """Decode a given value in a JSON-compatible form to a given type.
 

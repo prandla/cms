@@ -346,6 +346,12 @@ def open_archive(input: typing.IO[bytes]) -> ArchiveBase:
     else:
         raise ValueError("not a known archive format")
 
+def open_archive_from_name(name: str) -> ArchiveBase:
+    if os.path.isdir(name):
+        return ArchiveFolder(name)
+    else:
+        return open_archive(open(name, 'rb'))
+
 def create_archive_on_disk(name: str) -> ArchiveBase:
     """Opens an archive for writing. Chooses archive type based on filename."""
     if name.endswith(".tar"):
